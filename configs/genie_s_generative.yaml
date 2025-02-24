@@ -1,0 +1,95 @@
+seed_everything: 42
+trainer:
+  accelerator: auto
+  strategy: auto
+  devices: auto
+  num_nodes: 1
+  precision: bf16-true
+  logger: false
+  fast_dev_run: false
+  max_epochs: -1
+  min_epochs: null
+  max_steps: -1
+  min_steps: null
+  max_time: null
+  limit_train_batches: 1000
+  limit_val_batches: 0
+  limit_test_batches: null
+  limit_predict_batches: null
+  overfit_batches: 0.0
+  val_check_interval: null
+  check_val_every_n_epoch: null
+  num_sanity_val_steps: 0
+  log_every_n_steps: 10
+  enable_checkpointing: null
+  enable_progress_bar: null
+  enable_model_summary: null
+  accumulate_grad_batches: 1
+  gradient_clip_val: 1
+  gradient_clip_algorithm: null
+  deterministic: false
+  benchmark: null
+  inference_mode: true
+  use_distributed_sampler: true
+  profiler: null
+  detect_anomaly: false
+  barebones: false
+  sync_batchnorm: true
+  reload_dataloaders_every_n_epochs: 0
+  default_root_dir: null
+# ckpt_path: last
+model:
+  class_path: models.genie.HGeNIE
+  init_args:
+    lr: 1e-4
+    training_steps: 5400
+    warmup: 540
+    num_negatives: 30
+    gradient_checkpointing: false
+    gpt_config:
+      class_path: models.genie.GeNIEConfig
+      init_args:
+        n_positions: 110
+        n_channels: 128
+        n_embd: 768
+        n_layer: 12
+        n_head: 12
+        n_head_kv: 4
+        n_inner: 1728
+        global_att: true
+        activation_function: silu
+        resid_pdrop: 0.1
+        embd_pdrop: 0.1
+        attn_pdrop: 0.1
+        layer_norm_epsilon: 1.0e-05
+        initializer_range: 0.02
+        scale_attn_weights: true
+        use_cache: true
+        scale_attn_by_inverse_layer_idx: false
+        reorder_and_upcast_attn: false
+        lora: true
+    encoder:
+      class_path: models.fftencoder.WaveEncoder
+      init_args:
+        size_output: 768
+        wavelet: 'db4'
+    head:
+      class_path: models.genie.GeNIEHead
+      init_args:
+        size: 768
+        size_out: 2
+    base_model: <base_model_path>
+data:
+  class_path: eeg_datasets.sweclong.SWECLongEEGData
+  init_args:
+    folder: <dataset_path>
+    batch_size: 32
+    segment_n: 25
+    segment_size: 5000
+    stride: 5000
+    num_workers: 10
+    patients_per_batch: 1
+    train_patients:
+      - "ID01"
+    test_patients:
+      - "ID02"
