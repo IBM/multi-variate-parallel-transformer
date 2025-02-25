@@ -38,7 +38,7 @@ The example parameters are equivalent to what we have used to train GeNIE, excep
 
 ## Checkpoints
 
-The checkpoints can be downloaded from [this](https://ibm.box.com/s/2wwl8w025otfhp1247a8sh59qd8jqu1u) location. The checkpoint with `base` are the base models with only generative pre-training. The `swec` models are the classification heads.
+The checkpoints can be downloaded from [this](https://ibm.box.com/v/genie-checkpoints) location. The checkpoint with `base` are the base models with only generative pre-training. The `swec` models are the classification heads.
 
 ## Disclaimer
 
