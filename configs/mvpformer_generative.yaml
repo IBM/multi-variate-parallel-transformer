@@ -39,7 +39,7 @@ trainer:
   default_root_dir: null
 # ckpt_path: last
 model:
-  class_path: models.genie.HGeNIE
+  class_path: models.mvpformer.HMVPFormer
   init_args:
     lr: 1e-4
     training_steps: 5400
@@ -47,7 +47,7 @@ model:
     num_negatives: 30
     gradient_checkpointing: false
     gpt_config:
-      class_path: models.genie.GeNIEConfig
+      class_path: models.mvpformer.MVPFormerConfig
       init_args:
         n_positions: 110
         n_channels: 128
@@ -74,12 +74,12 @@ model:
         size_output: 2048
         wavelet: 'db4'
     head:
-      class_path: models.genie.GeNIEHead
+      class_path: models.mvpformer.MVPFormerHead
       init_args:
         size: 2048
     base_model: <base_model_path>
 data:
-  class_path: eeg_datasets.sweclong.SWECLongEEGData
+  class_path: eeg_datasets.longterm.LongTermEEGData
   init_args:
     folder: <dataset_path>
     batch_size: 32

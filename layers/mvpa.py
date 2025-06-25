@@ -5,7 +5,7 @@ import torch
 from attentions import flashmvpa
 
 
-class GeNIEGQAAttention(torch.nn.Module):
+class MVPFormerGQAAttention(torch.nn.Module):
     def __init__(
         self,
         config,
@@ -337,7 +337,7 @@ class GeNIEGQAAttention(torch.nn.Module):
         return outputs  # a, present, (attentions)
 
 
-class GeNIEGQAFlashAttention(GeNIEGQAAttention):
+class MVPFormerGQAFlashAttention(MVPFormerGQAAttention):
     def forward(
         self,
         hidden_states: Tuple[torch.FloatTensor] | None,

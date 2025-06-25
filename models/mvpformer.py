@@ -13,7 +13,7 @@ from deepspeed.runtime.activation_checkpointing.checkpointing import (
 )
 from eeg_datasets import EEGBatch
 from einops import rearrange
-from layers import GeNIEGQAAttention, GeNIEGQAFlashAttention
+from layers import MVPFormerGQAAttention, MVPFormerGQAFlashAttention
 from loggers.patient_logger import PatientLogger, PredictiveLogger
 from models import BrainDecider, BrainEncoder, BrainModel
 from pytorch_lightning.utilities.types import STEP_OUTPUT
@@ -34,7 +34,7 @@ from transformers.models.gpt2.modeling_gpt2 import (
 from transformers.models.llama.modeling_llama import LlamaMLP
 
 
-class GeNIEConfig(GPT2Config):
+class MVPFormerConfig(GPT2Config):
     attribute_map = {
         "hidden_size": "n_embd",
         "max_position_embeddings": "n_positions",
@@ -101,15 +101,15 @@ class GeNIEConfig(GPT2Config):
         )
 
 
-class GeNIEBlock(GPT2Block):
+class MVPFormerBlock(GPT2Block):
     def __init__(self, config, layer_idx=None):
         torch.nn.Module.__init__(self)
         hidden_size = config.hidden_size
         self.ln_1 = RMSNorm(hidden_size, eps=config.layer_norm_epsilon)
         if torch.cuda.get_device_capability()[0] >= 8:
-            self.attn = GeNIEGQAFlashAttention(config, layer_idx=layer_idx)
+            self.attn = MVPFormerGQAFlashAttention(config, layer_idx=layer_idx)
         else:
-            self.attn = GeNIEGQAAttention(config, layer_idx=layer_idx)
+            self.attn = MVPFormerGQAAttention(config, layer_idx=layer_idx)
         self.ln_2 = RMSNorm(hidden_size, eps=config.layer_norm_epsilon)
         self.mlp = LlamaMLP(config)
 
@@ -152,7 +152,7 @@ class GeNIEBlock(GPT2Block):
         return outputs  # hidden_states, present, (attentions, cross_attentions)
 
 
-class GeNIEModel(GPT2Model):
+class MVPFormerModel(GPT2Model):
     def __init__(self, config, gradient_checkpointing=False):
         GPT2PreTrainedModel.__init__(self, config)
         self.embed_dim = config.hidden_size
@@ -162,7 +162,7 @@ class GeNIEModel(GPT2Model):
         self.embed_kv_dim = self.head_dim * self.num_kv_heads
         self.drop = torch.nn.Dropout(config.embd_pdrop)
         self.h = torch.nn.ModuleList(
-            [GeNIEBlock(config, layer_idx=i) for i in range(config.num_hidden_layers)]
+            [MVPFormerBlock(config, layer_idx=i) for i in range(config.num_hidden_layers)]
         )
         self.ln_f = RMSNorm(self.embed_dim, eps=config.layer_norm_epsilon)
         self.positional_embedding = torch.nn.Embedding(
@@ -402,10 +402,10 @@ class GeNIEModel(GPT2Model):
         )
 
 
-class HGeNIE(BrainModel):
+class HMVPFormer(BrainModel):
     def __init__(
         self,
-        gpt_config: GeNIEConfig,
+        gpt_config: MVPFormerConfig,
         encoder: BrainEncoder,
         head: BrainDecider,
         num_negatives=20,
@@ -422,11 +422,11 @@ class HGeNIE(BrainModel):
         super().__init__()
         self.save_output_tokens = save_output_tokens
         self.gpt_config = gpt_config
-        self.genie = GeNIEModel(
+        self.mvpformer = MVPFormerModel(
             gpt_config, gradient_checkpointing=gradient_checkpointing
         )
         self.head = head
-        self.genie.set_input_embeddings(None)
+        self.mvpformer.set_input_embeddings(None)
         self.encoder = encoder
         self.loss = CrossEntropyLoss()
         self.num_negatives = num_negatives
@@ -561,7 +561,7 @@ class HGeNIE(BrainModel):
             ],
             -2,
         )
-        out = self.genie(
+        out = self.mvpformer(
             input_ids=None,
             past_key_values=past_key_values,
             inputs_embeds=input_embeds,
@@ -603,7 +603,7 @@ class HGeNIE(BrainModel):
             out_enc, "(bsz seg ch) len -> bsz seg ch len", bsz=bsz, seg=seg_n, ch=ch
         )
 
-        out = self.genie(input_ids=None, inputs_embeds=input_embeds).last_hidden_state
+        out = self.mvpformer(input_ids=None, inputs_embeds=input_embeds).last_hidden_state
         return out, input_embeds
 
     @staticmethod
@@ -804,10 +804,10 @@ class HGeNIE(BrainModel):
         }
 
 
-class ClassificationHGeNIE(HGeNIE):
+class ClassificationHMVPFormer(HMVPFormer):
     def __init__(
         self,
-        gpt_config: GeNIEConfig,
+        gpt_config: MVPFormerConfig,
         encoder: BrainEncoder,
         head: BrainDecider,
         num_negatives=20,
@@ -976,7 +976,7 @@ class ClassificationHGeNIE(HGeNIE):
         )
 
 
-class GeNIEHead(BrainDecider):
+class MVPFormerHead(BrainDecider):
     def __init__(self, size: int, size_out: Optional[int] = None) -> None:
         super().__init__()
         self.head = torch.nn.Linear(

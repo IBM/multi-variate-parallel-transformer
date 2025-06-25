@@ -2,7 +2,7 @@ seed_everything: 42
 trainer:
   accelerator: auto
   strategy: auto
-  devices: auto
+  devices: 1
   num_nodes: 1
   precision: bf16-true
   logger: false
@@ -12,7 +12,7 @@ trainer:
   max_steps: -1
   min_steps: null
   max_time: null
-  limit_train_batches: 1000
+  limit_train_batches: null
   limit_val_batches: 0
   limit_test_batches: null
   limit_predict_batches: null
@@ -39,23 +39,23 @@ trainer:
   default_root_dir: null
 # ckpt_path: last
 model:
-  class_path: models.genie.HGeNIE
+  class_path: models.mvpformer.ClassificationHMVPFormer
   init_args:
     lr: 1e-4
-    training_steps: 5400
-    warmup: 540
+    training_steps: 120000
+    warmup: 12000
     num_negatives: 30
     gradient_checkpointing: false
     gpt_config:
-      class_path: models.genie.GeNIEConfig
+      class_path: models.mvpformer.MVPFormerConfig
       init_args:
         n_positions: 110
         n_channels: 128
-        n_embd: 768
-        n_layer: 12
-        n_head: 12
-        n_head_kv: 4
-        n_inner: 1728
+        n_embd: 2048
+        n_layer: 24
+        n_head: 16
+        n_head_kv: 8
+        n_inner: 5632
         global_att: true
         activation_function: silu
         resid_pdrop: 0.1
@@ -71,16 +71,17 @@ model:
     encoder:
       class_path: models.fftencoder.WaveEncoder
       init_args:
-        size_output: 768
+        size_output: 2048
         wavelet: 'db4'
     head:
-      class_path: models.genie.GeNIEHead
+      class_path: models.mvpformer.MVPFormerHead
       init_args:
-        size: 768
+        size: 2048
         size_out: 2
     base_model: <base_model_path>
+    head_model: <head_model_path>
 data:
-  class_path: eeg_datasets.sweclong.SWECLongEEGData
+  class_path: eeg_datasets.longterm.LongTermEEGData
   init_args:
     folder: <dataset_path>
     batch_size: 32

@@ -1,1 +1,1 @@
-from .mvpa import GeNIEGQAAttention, GeNIEGQAFlashAttention
+from .mvpa import MVPFormerGQAAttention, MVPFormerGQAFlashAttention

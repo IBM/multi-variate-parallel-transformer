@@ -190,21 +190,11 @@ class EEGPatientSampler(Sampler[List[int]]):
                         )
                         for (beg, end) in patient_length
                     ]
-                    # all_indices = itertools.chain.from_iterable(
-                    #     [range(beg, end) for (beg, end) in patient_length]
-                    # )
-                    # patient_sampler = SubsetRandomSampler(
-                    #     list(all_indices), generator=self.generator
-                    # )
             else:
                 patient_samplers = [
                     SubsetSampler(list(range(beg, end)))
                     for (beg, end) in patient_length
                 ]
-                # all_indices = itertools.chain.from_iterable(
-                #     [range(beg, end) for (beg, end) in patient_length]
-                # )
-                # patient_sampler = SubsetSampler(list(all_indices))
             samplers.extend(patient_samplers)
         self.samplers = samplers
 
