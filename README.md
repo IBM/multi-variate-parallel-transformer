@@ -27,9 +27,9 @@ We use `PyTorch Lightning` to distribute reproducible configuration files for ou
 python main.py test --config configs/mvpformer_classification.yaml --model.init_args.base_model '<base_checkpoint_path>' --model.init_args.head_model '<head_checkpoint_path>' --data.init_args.folder '<dataset_path>' --data.init_args.test_patients ['<dataset_subject>']
 ```
 
-## Testing MVPFormer
+## Training MVPFormer
 
-We use `PyTorch Lightning` to distribute reproducible configuration files for our experiments. The example testing configuration file can be found in the `configs` folder. You can start testing with:
+We use `PyTorch Lightning` to distribute reproducible configuration files for our experiments. The example testing configuration file can be found in the `configs` folder. You can start training with:
 ```bash
 python main.py fit --config configs/mvpformer_classification.yaml --model.init_args.base_model '<base_checkpoint_path>' --model.init_args.head_model '<head_checkpoint_path>' --data.init_args.folder '<dataset_path>' --data.init_args.train_patients ['<dataset_subject>']
 ```
