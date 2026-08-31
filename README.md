@@ -1,6 +1,6 @@
 # MVPFormer: A foundation model with multi-variate parallel attention to generate neuronal activity
 
-[![arXiv](https://img.shields.io/badge/arXiv-2506.20354-00ff00.svg)](https://arxiv.org/abs/2506.20354) [![Static Badge](https://img.shields.io/badge/SWEC-iEEG%20SWEC%20Dataset-fedcba?style=flat&label=Data)](https://mb-neuro.medical-blocks.ch/public_access/databases/ieeg/swec_ieeg)
+[![Static Badge](https://img.shields.io/badge/ICLR%202026-58c9ed?style=flat&label=Published%20at)](https://openreview.net/forum?id=5M1YOW3bRq) [![arXiv](https://img.shields.io/badge/arXiv-2506.20354-00ff00.svg)](https://arxiv.org/abs/2506.20354) [![Static Badge](https://img.shields.io/badge/SWEC-iEEG%20SWEC%20Dataset-fedcba?style=flat&label=Data)](https://mb-neuro.medical-blocks.ch/public_access/databases/ieeg/swec_ieeg)
 
 MVPFormer is a foundation model trained and tested on almost 10,000 hours of iEEG recordings. It can do next-state prediction and, with the addition of classification heads, can also detect seizures.
 
@@ -53,11 +53,12 @@ This software may only be used for research. For other applications any liabilit
 ## Citation
 
 ```
-@article{carzaniga2025foundation,
+@article{carzaniga2026foundation,
   title={A foundation model with multi-variate parallel attention to generate neuronal activity},
-  author={Carzaniga, Francesco and Hersche, Michael and Sebastian, Abu and Schindler, Kaspar and Rahimi, Abbas},
-  journal={arXiv preprint arXiv:2506.20354},
-  year={2025}
+  author={Francesco S. Carzaniga and Michael Hersche and Abu Sebastian and Kaspar Schindler and Abbas Rahimi},
+  booktitle={The Fourteenth International Conference on Learning Representations},
+  year={2026},
+  url={https://openreview.net/forum?id=5M1YOW3bRq}
 }
 ```
 
@@ -67,7 +68,7 @@ If you would like to see the detailed LICENSE click [here](LICENSE).
 
 ```text
 #
-# Copyright IBM Corp. 2024 - 2025
+# Copyright IBM Corp. 2024 - 2026
 # SPDX-License-Identifier: Apache-2.0
 #
 ```
